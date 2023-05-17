@@ -144,5 +144,70 @@ public class DatabaseManager {
             emf.close();
         }
     }
+    
+    public void alterarGrupoUsuario(UserType userType) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        
+        try {
+            emf = Persistence.createEntityManagerFactory("myPU");
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            // Atualizar o grupo de usuário na tabela
+            em.merge(userType);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+            if (emf != null) {
+                emf.close();
+            }
+        }
+    }
+    
+    public void deleteGrupoUsuario(UserType userType) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        
+        try {
+            emf = Persistence.createEntityManagerFactory("myPU");
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            // Carregar o grupo de usuário pelo ID
+            UserType grupoUsuario = em.find(UserType.class, userType.getId());
+            
+            if (grupoUsuario != null) {
+                // Excluir o grupo de usuário
+                em.remove(grupoUsuario);
+            }
+            
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+            if (emf != null) {
+                emf.close();
+            }
+        }
+    }
 
 }

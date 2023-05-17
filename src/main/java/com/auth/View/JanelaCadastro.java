@@ -3,6 +3,7 @@ package com.auth.View;
 import com.auth.Database.DatabaseManager;
 import com.auth.Entities.UserType;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -11,6 +12,7 @@ import java.util.List;
 public class JanelaCadastro extends javax.swing.JPanel {
 
     private DatabaseManager banco;
+    private List<UserType> listaGrupos;
     
     public JanelaCadastro() {
         initComponents();
@@ -19,9 +21,20 @@ public class JanelaCadastro extends javax.swing.JPanel {
     }
 
     public void getGrupos(){
-        List<UserType> listaGrupos = banco.getUserType();
+        listaGrupos = banco.getUserType();
         for (UserType grupo : listaGrupos) {
             cb_CriaGrupo.addItem(grupo.getNome());
+            cb_EditaGrupo.addItem(grupo.getNome());
+        }
+    }
+    
+    public void preencheGrupo(){
+        String grupoSelecionado = cb_EditaGrupo.getSelectedItem().toString();
+        for (UserType grupo : listaGrupos) {
+            if (grupoSelecionado.equals(grupo.getNome())) {
+                tf_EditaNomeGrupo.setText(grupo.getNome());
+                tf_EditaDescriçãoGrupo.setText(grupo.getDescricao());
+            }
         }
     }
     
@@ -76,6 +89,34 @@ public class JanelaCadastro extends javax.swing.JPanel {
         banco.createUserType(nome, descricao);
     }
     
+    public void processaAlteracaoDeGrupo(){
+        UserType grupoAlterado = null;
+        String grupoALteradoNome = cb_EditaGrupo.getSelectedItem().toString();
+        
+        for (UserType grupo : listaGrupos) {
+            if (grupoALteradoNome.equals(grupo.getNome())) {
+                grupoAlterado = grupo;
+                grupoAlterado.setNome(tf_EditaNomeGrupo.getText());
+                grupoAlterado.setDescricao(tf_EditaDescriçãoGrupo.getText());
+            }
+        }
+        banco.alterarGrupoUsuario(grupoAlterado);
+        ReturnMessagePane.informationPainel("Alteração realizada.");
+    }
+    
+    public void processaDeleteDeGrupo(){
+        UserType grupoDelete = null;
+        String grupoALteradoNome = cb_EditaGrupo.getSelectedItem().toString();
+        
+        for (UserType grupo : listaGrupos) {
+            if (grupoALteradoNome.equals(grupo.getNome())) {
+                grupoDelete = grupo;
+            }
+        }
+        banco.deleteGrupoUsuario(grupoDelete);
+        ReturnMessagePane.informationPainel("Exclusão realizada.");
+    }
+    
     public void criaUsuario(){
         if (verificaCamposCriaUsuario()) {
             processaCriacaoDeUsuario();
@@ -121,14 +162,14 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jSeparator3 = new javax.swing.JSeparator();
         jLabel13 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        cb_EditaGrupo = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        tf_Email6 = new javax.swing.JTextField();
+        tf_EditaNomeGrupo = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
-        tf_Email7 = new javax.swing.JTextField();
-        bt_CriaGrupo2 = new javax.swing.JButton();
-        bt_CriaGrupo3 = new javax.swing.JButton();
+        tf_EditaDescriçãoGrupo = new javax.swing.JTextField();
+        bt_EditaGrupo = new javax.swing.JButton();
+        bt_ExcluiGrupo = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jSeparator4 = new javax.swing.JSeparator();
         jLabel17 = new javax.swing.JLabel();
@@ -348,9 +389,14 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jLabel13.setForeground(new java.awt.Color(0, 0, 0));
         jLabel13.setText("Editar Grupo de Permissão");
 
-        jComboBox2.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox2.setForeground(new java.awt.Color(0, 0, 0));
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione" }));
+        cb_EditaGrupo.setBackground(new java.awt.Color(255, 255, 255));
+        cb_EditaGrupo.setForeground(new java.awt.Color(0, 0, 0));
+        cb_EditaGrupo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione" }));
+        cb_EditaGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_EditaGrupoActionPerformed(evt);
+            }
+        });
 
         jLabel14.setForeground(new java.awt.Color(0, 0, 0));
         jLabel14.setText("Grupo:");
@@ -358,30 +404,30 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jLabel15.setForeground(new java.awt.Color(0, 0, 0));
         jLabel15.setText("Nome:");
 
-        tf_Email6.setBackground(new java.awt.Color(255, 255, 255));
-        tf_Email6.setForeground(new java.awt.Color(0, 0, 0));
+        tf_EditaNomeGrupo.setBackground(new java.awt.Color(255, 255, 255));
+        tf_EditaNomeGrupo.setForeground(new java.awt.Color(0, 0, 0));
 
         jLabel16.setForeground(new java.awt.Color(0, 0, 0));
         jLabel16.setText("Descrição:");
 
-        tf_Email7.setBackground(new java.awt.Color(255, 255, 255));
-        tf_Email7.setForeground(new java.awt.Color(0, 0, 0));
+        tf_EditaDescriçãoGrupo.setBackground(new java.awt.Color(255, 255, 255));
+        tf_EditaDescriçãoGrupo.setForeground(new java.awt.Color(0, 0, 0));
 
-        bt_CriaGrupo2.setBackground(new java.awt.Color(204, 204, 204));
-        bt_CriaGrupo2.setForeground(new java.awt.Color(0, 0, 0));
-        bt_CriaGrupo2.setText("Alterar");
-        bt_CriaGrupo2.addActionListener(new java.awt.event.ActionListener() {
+        bt_EditaGrupo.setBackground(new java.awt.Color(204, 204, 204));
+        bt_EditaGrupo.setForeground(new java.awt.Color(0, 0, 0));
+        bt_EditaGrupo.setText("Alterar");
+        bt_EditaGrupo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_CriaGrupo2ActionPerformed(evt);
+                bt_EditaGrupoActionPerformed(evt);
             }
         });
 
-        bt_CriaGrupo3.setBackground(new java.awt.Color(204, 204, 204));
-        bt_CriaGrupo3.setForeground(new java.awt.Color(0, 0, 0));
-        bt_CriaGrupo3.setText("Excluir");
-        bt_CriaGrupo3.addActionListener(new java.awt.event.ActionListener() {
+        bt_ExcluiGrupo.setBackground(new java.awt.Color(204, 204, 204));
+        bt_ExcluiGrupo.setForeground(new java.awt.Color(0, 0, 0));
+        bt_ExcluiGrupo.setText("Excluir");
+        bt_ExcluiGrupo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_CriaGrupo3ActionPerformed(evt);
+                bt_ExcluiGrupoActionPerformed(evt);
             }
         });
 
@@ -400,19 +446,19 @@ public class JanelaCadastro extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel14)
                         .addGap(24, 24, 24)
-                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cb_EditaGrupo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addComponent(bt_CriaGrupo3)
+                        .addComponent(bt_ExcluiGrupo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bt_CriaGrupo2))
+                        .addComponent(bt_EditaGrupo))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel16)
                             .addComponent(jLabel15))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tf_Email7)
-                            .addComponent(tf_Email6))))
+                            .addComponent(tf_EditaDescriçãoGrupo)
+                            .addComponent(tf_EditaNomeGrupo))))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -424,20 +470,20 @@ public class JanelaCadastro extends javax.swing.JPanel {
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cb_EditaGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tf_Email6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tf_EditaNomeGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tf_Email7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tf_EditaDescriçãoGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bt_CriaGrupo3)
-                    .addComponent(bt_CriaGrupo2))
+                    .addComponent(bt_ExcluiGrupo)
+                    .addComponent(bt_EditaGrupo))
                 .addContainerGap())
         );
 
@@ -636,13 +682,13 @@ public class JanelaCadastro extends javax.swing.JPanel {
         criaUsuario();
     }//GEN-LAST:event_bt_CriaUserActionPerformed
 
-    private void bt_CriaGrupo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_CriaGrupo2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bt_CriaGrupo2ActionPerformed
+    private void bt_EditaGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_EditaGrupoActionPerformed
+        processaAlteracaoDeGrupo();
+    }//GEN-LAST:event_bt_EditaGrupoActionPerformed
 
-    private void bt_CriaGrupo3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_CriaGrupo3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bt_CriaGrupo3ActionPerformed
+    private void bt_ExcluiGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_ExcluiGrupoActionPerformed
+        processaDeleteDeGrupo();
+    }//GEN-LAST:event_bt_ExcluiGrupoActionPerformed
 
     private void bt_CriaGrupo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_CriaGrupo4ActionPerformed
         // TODO add your handling code here:
@@ -656,17 +702,21 @@ public class JanelaCadastro extends javax.swing.JPanel {
         System.exit(0);
     }//GEN-LAST:event_bt_LogoutActionPerformed
 
+    private void cb_EditaGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_EditaGrupoActionPerformed
+        preencheGrupo();
+    }//GEN-LAST:event_cb_EditaGrupoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_CriaGrupo;
-    private javax.swing.JButton bt_CriaGrupo2;
-    private javax.swing.JButton bt_CriaGrupo3;
     private javax.swing.JButton bt_CriaGrupo4;
     private javax.swing.JButton bt_CriaGrupo5;
     private javax.swing.JButton bt_CriaUser;
+    private javax.swing.JButton bt_EditaGrupo;
+    private javax.swing.JButton bt_ExcluiGrupo;
     private javax.swing.JButton bt_Logout;
     private javax.swing.JComboBox<String> cb_CriaGrupo;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JComboBox<String> cb_EditaGrupo;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JLabel jLabel1;
@@ -705,8 +755,8 @@ public class JanelaCadastro extends javax.swing.JPanel {
     private javax.swing.JTextField tf_CriaEmail;
     private javax.swing.JTextField tf_CriaGrupo;
     private javax.swing.JTextField tf_CriaUser;
-    private javax.swing.JTextField tf_Email6;
-    private javax.swing.JTextField tf_Email7;
+    private javax.swing.JTextField tf_EditaDescriçãoGrupo;
+    private javax.swing.JTextField tf_EditaNomeGrupo;
     private javax.swing.JTextField tf_Email8;
     private javax.swing.JTextField tf_Email9;
     // End of variables declaration//GEN-END:variables
