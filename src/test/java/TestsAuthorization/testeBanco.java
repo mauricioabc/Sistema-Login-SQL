@@ -22,6 +22,13 @@ public class testeBanco {
     }
     
     @Test
+    public void getUserTypeByEmail(){
+        DatabaseManager banco = DatabaseManager.getInstance();
+        UserType retorno = banco.getUserTypeByEmail("mauricio@gmail.com");
+        System.out.println(retorno.getNome());
+    }
+    
+    @Test
     public void testeCriarConfig(){
         Security sec = Security.getInstance();
         sec.generateKeyPair();

@@ -1,2 +1,0 @@
-2023-06-06 15:21:56.624 | DatabaseManager | ERROR | Erro na importação dos dados do ambiente.
-2023-06-06 15:26:26.369 | DatabaseManager | ERROR | Erro na importação dos dados do ambiente.

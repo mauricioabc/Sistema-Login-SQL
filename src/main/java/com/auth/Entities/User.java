@@ -98,6 +98,14 @@ public class User {
     public void setUserTypeId(UserType userType) {
         this.userType.setId(userType.getId());
     }
+    
+    public UserType getUserType() {
+        return userType;
+    }
+    
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 
     public Date getInsertDate() {
         return insertDate;

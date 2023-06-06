@@ -5,6 +5,7 @@ import com.auth.Entities.User;
 import com.auth.Entities.UserType;
 import com.auth.Security.Security;
 import com.auth.View.ReturnMessagePane;
+import com.logger.Log.Log;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
@@ -110,34 +111,64 @@ public class DatabaseManager {
         // Obter a instância do EntityManager a partir do EntityManagerFactory
         EntityManager em = emf.createEntityManager();
         try {
-        // Consulta para buscar o usuário pelo email fornecido
-        String jpql = "SELECT u FROM User u WHERE u.email = :email";
-        TypedQuery<User> query = em.createQuery(jpql, User.class);
-        query.setParameter("email", email);
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Recuperando usuário do banco de dados.");
+            // Consulta para buscar o usuário pelo email fornecido
+            String jpql = "SELECT u FROM User u WHERE u.email = :email";
+            TypedQuery<User> query = em.createQuery(jpql, User.class);
+            query.setParameter("email", email);
 
-        User user = query.getSingleResult(); // tenta obter o usuário
+            User user = query.getSingleResult(); // tenta obter o usuário
 
-        // Verifica se o usuário foi encontrado
-        if (user != null) {
-            // Se o usuário foi encontrado, verificar a senha
-            if (security.decryptPassword(user.getPasswordHash()).equals(security.decryptPassword(passwordHash))) {
-                // Se a senha estiver correta, retorna SUCCESS
-                return 1;
+            // Verifica se o usuário foi encontrado
+            if (user != null) {
+                // Se o usuário foi encontrado, verificar a senha
+                if (security.decryptPassword(user.getPasswordHash()).equals(security.decryptPassword(passwordHash))) {
+                    // Se a senha estiver correta, retorna SUCCESS
+                    Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Login autorizado para o usuário: " + email);
+                    return 1;
+                } else {
+                    // Senha incorreta
+                    Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Senha incorreta para o usuário: " + email);
+                    return 2;
+                }
             } else {
-                // Senha incorreta
-                return 2;
+                // Usuário não encontrado
+                Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Usuário '" + email + "' não encontrado");
+                return 3;
             }
-        } else {
-            // Usuário não encontrado
-            return 3;
-        }
         } catch (NoResultException e) {
             // Email não encontrado
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Email não encontrado.");
             return 4;
         } finally {
             // Fechar o EntityManager e o EntityManagerFactory
             em.close();
             emf.close();
+        }
+    }
+    
+    public UserType getUserTypeByEmail(String email) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Recuperando tipo do usuário: " + email);
+            Query userQuery = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
+            userQuery.setParameter("email", email);
+            List<User> usersWithEmail = userQuery.getResultList();
+
+            if (!usersWithEmail.isEmpty()) {
+                User user = usersWithEmail.get(0);
+                UserType userType = user.getUserType();
+                Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Usuário do tipo: " + userType.getNome());
+                return userType;
+            } else {
+                Log.LogAuthenticationComponent("DatabaseManager", "INFO", "Tipo de usuário não encontrado.");
+                ReturnMessagePane.errorPainel("Tipo de usuário não encontrado.");
+                throw new IllegalArgumentException("Tipo de usuário não encontrado.");
+            }
+        } finally {
+            em.close();
         }
     }
     

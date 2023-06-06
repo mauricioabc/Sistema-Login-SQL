@@ -2,6 +2,7 @@ package com.auth.View;
 
 import com.auth.Database.DatabaseManager;
 import com.auth.Security.Security;
+import com.logger.Log.Log;
 import java.awt.BorderLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,9 +19,11 @@ public final class JanelaLogin extends javax.swing.JPanel {
     private Security sec;
     
     public JanelaLogin() throws Exception {
+        Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Iniciando componente de autenticação.");
         initComponents();
         banco = DatabaseManager.getInstance();
         sec = Security.getInstance();
+        Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Componente de autenticação iniciado.");
     }
     
     public void gotoJanelaCadastro(String actualUserName){
@@ -28,6 +31,15 @@ public final class JanelaLogin extends javax.swing.JPanel {
         JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
         janela.getContentPane().remove(Janela.p1);
         janela.add(Janela.p2, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
+    public void gotoJanelaTeste(String actualUserName){
+        Janela.p3 = new JanelaTeste(actualUserName);
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
+        janela.getContentPane().remove(Janela.p1);
+        janela.add(Janela.p3, BorderLayout.CENTER);
         janela.pack();
         janela.setLocationRelativeTo(null);
     }
@@ -47,34 +59,50 @@ public final class JanelaLogin extends javax.swing.JPanel {
     }
     
     public int processaLogin() throws Exception{
+        Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Iniciando processo de login.");
         String email, senha;
         email = tf_Email.getText();
         char[] password = pf_Senha.getPassword();
         senha = new String(password);
         String passwordHash = sec.encryptPassword(senha);
+        Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Criando requisição de login para o usuário: " + email);
         return banco.login(email, passwordHash);
     }
     
-    public void login() throws Exception{
+    public void login() throws Exception {
         if (verificaCampos()) {
             int status = processaLogin();
+            Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Finalizando processo de login.");
             switch (status) {
-            case 1:
-                //ReturnMessagePane.informationPainel("Login bem sucedido");
-                gotoJanelaCadastro(tf_Email.getText());
-                break;
-            case 4:
-                ReturnMessagePane.errorPainel("Email nao encontrado");
-                break;
-            case 2:
-                ReturnMessagePane.errorPainel("Senha incorreta");
-                break;
-            case 3:
-                ReturnMessagePane.errorPainel("Usuário nao encontrado");
-                break;
-            default:
-                ReturnMessagePane.errorPainel("Erro desconhecido");
-        }
+                case 1:
+                    Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Verificando tipo de usuário.");
+                    String userType, email;
+                    email = tf_Email.getText();
+                    userType = banco.getUserTypeByEmail(email).getNome();
+                    switch (userType) {
+                        case "Administrador":
+                            Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Administrador.");
+                            gotoJanelaCadastro(email);
+                            break;
+                        default:
+                            Log.LogAuthenticationComponent("JanelaLogin", "INFO", "Direcionando usuário para a visão de Teste.");
+                            gotoJanelaTeste(email);
+                            break;
+                    }
+                    break;
+                case 4:
+                    ReturnMessagePane.errorPainel("Email nao encontrado");
+                    break;
+                case 2:
+                    ReturnMessagePane.errorPainel("Senha incorreta");
+                    break;
+                case 3:
+                    ReturnMessagePane.errorPainel("Usuário nao encontrado");
+                    break;
+                default:
+                    ReturnMessagePane.errorPainel("Erro desconhecido");
+                    break;
+            }
         }
     }
     
@@ -91,6 +119,17 @@ public final class JanelaLogin extends javax.swing.JPanel {
         bt_Entrar = new javax.swing.JButton();
         bt_Sair = new javax.swing.JButton();
         pf_Senha = new javax.swing.JPasswordField();
+
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                formMouseDragged(evt);
+            }
+        });
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                formMousePressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 255));
 
@@ -215,6 +254,18 @@ public final class JanelaLogin extends javax.swing.JPanel {
     private void bt_SairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SairActionPerformed
         System.exit(0);
     }//GEN-LAST:event_bt_SairActionPerformed
+
+    int xx, xy;
+    private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        Janela.j.setLocation(x-xx,y-xy);
+    }//GEN-LAST:event_formMouseDragged
+
+    private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+        xx = evt.getX();
+        xy = evt.getY();
+    }//GEN-LAST:event_formMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -14,6 +14,7 @@ public class Janela extends javax.swing.JFrame {
     static Janela j;
     static JanelaLogin p1;
     static JanelaCadastro p2;
+    static JanelaTeste p3;
     
     public Janela() throws Exception {
         initComponents();

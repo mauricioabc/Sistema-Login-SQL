@@ -2,10 +2,13 @@ package com.auth.View;
 
 import com.auth.Database.DatabaseManager;
 import com.auth.Entities.UserType;
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -23,6 +26,15 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         getGrupos();
     }
 
+    public void logout() throws Exception{
+        Janela.p1 = new JanelaLogin();
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p2);
+        janela.getContentPane().remove(Janela.p2);
+        janela.add(Janela.p1, BorderLayout.CENTER);
+        janela.pack();
+        janela.setLocationRelativeTo(null);
+    }
+    
     public void getGrupos(){
         listaGrupos = banco.getUserType();
         for (UserType grupo : listaGrupos) {
@@ -31,12 +43,41 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         }
     }
     
-    public void preencheGrupo(){
-        String grupoSelecionado = cb_EditaGrupo.getSelectedItem().toString();
-        for (UserType grupo : listaGrupos) {
-            if (grupoSelecionado.equals(grupo.getNome())) {
-                tf_EditaNomeGrupo.setText(grupo.getNome());
-                tf_EditaDescriçãoGrupo.setText(grupo.getDescricao());
+    public void limpaGrupos(){
+        //Limpeza
+        cb_CriaGrupo.removeAllItems();
+        cb_CriaGrupo.addItem("Selecione");
+        cb_CriaGrupo.setSelectedIndex(0);
+        cb_EditaGrupo.removeAllItems();
+        cb_EditaGrupo.addItem("Selecione");
+        cb_EditaGrupo.setSelectedIndex(0);
+        tf_EditaNomeGrupo.setText("");
+        tf_EditaDescriçãoGrupo.setText("");
+        listaGrupos.clear();
+    }
+    
+    public void limpaUser(){
+        tf_CriaUser.setText("");
+        tf_CriaEmail.setText("");
+        pf_CriaSenha.setText("");
+        cb_CriaGrupo.setSelectedIndex(0);
+    }
+    
+    public void limpaGrupo(){
+        tf_CriaGrupo.setText("");
+        tf_CriaDescricao.setText("");
+    }
+    
+    public void preencheGrupo() {
+        Object itemSelecionado = cb_EditaGrupo.getSelectedItem();
+        if (itemSelecionado != null && !itemSelecionado.toString().equals("Selecione")) {
+            String grupoSelecionado = itemSelecionado.toString();
+            for (UserType grupo : listaGrupos) {
+                if (grupoSelecionado.equals(grupo.getNome())) {
+                    tf_EditaNomeGrupo.setText(grupo.getNome());
+                    tf_EditaDescriçãoGrupo.setText(grupo.getDescricao());
+                    break; // Se já encontrou o grupo, pode interromper o loop
+                }
             }
         }
     }
@@ -112,7 +153,6 @@ public final class JanelaCadastro extends javax.swing.JPanel {
             }
         }
         banco.alterarGrupoUsuario(grupoAlterado);
-        ReturnMessagePane.informationPainel("Alteração realizada.");
     }
     
     public void processaDeleteDeGrupo(){
@@ -125,12 +165,12 @@ public final class JanelaCadastro extends javax.swing.JPanel {
             }
         }
         banco.deleteGrupoUsuario(grupoDelete);
-        ReturnMessagePane.informationPainel("Exclusão realizada.");
     }
     
     public void criaUsuario() throws Exception{
         if (verificaCamposCriaUsuario()) {
             processaCriacaoDeUsuario();
+            limpaUser();
             ReturnMessagePane.informationPainel("Usuário criado com sucesso.");
         }
     }
@@ -138,6 +178,9 @@ public final class JanelaCadastro extends javax.swing.JPanel {
     public void criaGrupo(){
         if (verificaCamposCriaGrupo()) {
             processaCriacaoDeGrupo();
+            limpaGrupo();
+            limpaGrupos();
+            getGrupos();
             ReturnMessagePane.informationPainel("Grupo criado com sucesso.");
         }
     }
@@ -145,13 +188,17 @@ public final class JanelaCadastro extends javax.swing.JPanel {
     public void editaGrupo(){
         if (verificaCamposEditaGrupo()) {
             processaAlteracaoDeGrupo();
-            ReturnMessagePane.informationPainel("Grupo editado com sucesso.");
+            limpaGrupos();
+            getGrupos();
+            ReturnMessagePane.informationPainel("Grupo excluído com sucesso.");
         }
     }
     
     public void deletaGrupo(){
         if (verificaCamposEditaGrupo()) {
             processaDeleteDeGrupo();
+            limpaGrupos();
+            getGrupos();
             ReturnMessagePane.informationPainel("Grupo excluído com sucesso.");
         }
     }
@@ -164,6 +211,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lb_ActualUser = new javax.swing.JLabel();
+        lb_Logout = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -211,9 +259,20 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         bt_AtualizaUser = new javax.swing.JButton();
         bt_ExcluirUser = new javax.swing.JButton();
         jPasswordField1 = new javax.swing.JPasswordField();
-        bt_Logout = new javax.swing.JButton();
+        bt_Sair = new javax.swing.JButton();
 
         jLabel5.setText("jLabel5");
+
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                formMouseDragged(evt);
+            }
+        });
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                formMousePressed(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 255));
 
@@ -225,6 +284,17 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         lb_ActualUser.setForeground(new java.awt.Color(255, 255, 255));
         lb_ActualUser.setText("<actualUser>");
 
+        lb_Logout.setBackground(new java.awt.Color(255, 255, 255));
+        lb_Logout.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lb_Logout.setForeground(new java.awt.Color(255, 255, 255));
+        lb_Logout.setIcon(new javax.swing.ImageIcon(".\\images\\iconExit.png"));
+        lb_Logout.setText("Logout");
+        lb_Logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lb_LogoutMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -234,6 +304,8 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lb_ActualUser)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lb_Logout)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -242,7 +314,8 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(lb_ActualUser))
+                    .addComponent(lb_ActualUser)
+                    .addComponent(lb_Logout))
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
@@ -641,12 +714,12 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bt_Logout.setBackground(new java.awt.Color(255, 255, 255));
-        bt_Logout.setForeground(new java.awt.Color(0, 0, 0));
-        bt_Logout.setText("Sair");
-        bt_Logout.addActionListener(new java.awt.event.ActionListener() {
+        bt_Sair.setBackground(new java.awt.Color(255, 255, 255));
+        bt_Sair.setForeground(new java.awt.Color(0, 0, 0));
+        bt_Sair.setText("Sair");
+        bt_Sair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_LogoutActionPerformed(evt);
+                bt_SairActionPerformed(evt);
             }
         });
 
@@ -667,7 +740,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(bt_Logout)))
+                        .addComponent(bt_Sair)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -684,7 +757,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bt_Logout)
+                .addComponent(bt_Sair)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -732,13 +805,33 @@ public final class JanelaCadastro extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_bt_AtualizaUserActionPerformed
 
-    private void bt_LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LogoutActionPerformed
+    private void bt_SairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SairActionPerformed
         System.exit(0);
-    }//GEN-LAST:event_bt_LogoutActionPerformed
+    }//GEN-LAST:event_bt_SairActionPerformed
 
     private void cb_EditaGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_EditaGrupoActionPerformed
         preencheGrupo();
     }//GEN-LAST:event_cb_EditaGrupoActionPerformed
+
+    private void lb_LogoutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_LogoutMousePressed
+        try {
+            logout();
+        } catch (Exception ex) {
+            Logger.getLogger(JanelaCadastro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_lb_LogoutMousePressed
+
+    int xx, xy;
+    private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        Janela.j.setLocation(x-xx,y-xy);
+    }//GEN-LAST:event_formMouseDragged
+
+    private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+        xx = evt.getX();
+        xy = evt.getY();
+    }//GEN-LAST:event_formMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -748,7 +841,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
     private javax.swing.JButton bt_EditaGrupo;
     private javax.swing.JButton bt_ExcluiGrupo;
     private javax.swing.JButton bt_ExcluirUser;
-    private javax.swing.JButton bt_Logout;
+    private javax.swing.JButton bt_Sair;
     private javax.swing.JComboBox<String> cb_CriaGrupo;
     private javax.swing.JComboBox<String> cb_EditaGrupo;
     private javax.swing.JComboBox<String> jComboBox3;
@@ -785,6 +878,7 @@ public final class JanelaCadastro extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel lb_ActualUser;
+    private javax.swing.JLabel lb_Logout;
     private javax.swing.JPasswordField pf_CriaSenha;
     private javax.swing.JTextField tf_CriaDescricao;
     private javax.swing.JTextField tf_CriaEmail;
