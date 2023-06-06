@@ -32,7 +32,7 @@ public class User {
     @Column(name = "Email")
     private String email;
     
-    @Column(name = "PasswordHash")
+    @Column(name = "PasswordHash", columnDefinition = "varchar(max)")
     private String passwordHash;
     
     @Column(name = "UserTypeId", columnDefinition = "uniqueidentifier")

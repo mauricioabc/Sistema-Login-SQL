@@ -1,7 +1,10 @@
 package com.auth.View;
 
 import com.auth.Database.DatabaseManager;
+import com.auth.Security.Security;
 import java.awt.BorderLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -12,10 +15,12 @@ import javax.swing.SwingUtilities;
 public class JanelaLogin extends javax.swing.JPanel {
 
     private DatabaseManager banco;
+    private Security sec;
     
     public JanelaLogin() {
         initComponents();
         banco = new DatabaseManager();
+        sec = new Security();
     }
 
     public void gotoJanelaCadastro(){
@@ -41,15 +46,16 @@ public class JanelaLogin extends javax.swing.JPanel {
         return true;
     }
     
-    public int processaLogin(){
+    public int processaLogin() throws Exception{
         String email, senha;
         email = tf_Email.getText();
         char[] password = pf_Senha.getPassword();
         senha = new String(password);
-        return banco.login(email, senha);
+        String passwordHash = sec.encryptPassword(senha);
+        return banco.login(email, passwordHash);
     }
     
-    public void login(){
+    public void login() throws Exception{
         if (verificaCampos()) {
             int status = processaLogin();
             switch (status) {
@@ -113,7 +119,7 @@ public class JanelaLogin extends javax.swing.JPanel {
 
         tf_Email.setBackground(new java.awt.Color(255, 255, 255));
         tf_Email.setForeground(new java.awt.Color(0, 0, 0));
-        tf_Email.setText("joao@gmail.com");
+        tf_Email.setText("mauricio@gmail.com");
 
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("E-mail:");
@@ -199,7 +205,11 @@ public class JanelaLogin extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bt_EntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_EntrarActionPerformed
-        login();
+        try {
+            login();
+        } catch (Exception ex) {
+            Logger.getLogger(JanelaLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_bt_EntrarActionPerformed
 
     private void bt_SairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_SairActionPerformed

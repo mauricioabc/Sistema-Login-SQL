@@ -4,6 +4,8 @@ import com.auth.Database.DatabaseManager;
 import com.auth.Entities.UserType;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -72,7 +74,7 @@ public class JanelaCadastro extends javax.swing.JPanel {
         return true;
     }
     
-    public void processaCriacaoDeUsuario(){
+    public void processaCriacaoDeUsuario() throws Exception{
         String nome, email, senha, grupo;
         nome = tf_CriaUser.getText();
         email = tf_CriaEmail.getText();
@@ -117,7 +119,7 @@ public class JanelaCadastro extends javax.swing.JPanel {
         ReturnMessagePane.informationPainel("Exclusão realizada.");
     }
     
-    public void criaUsuario(){
+    public void criaUsuario() throws Exception{
         if (verificaCamposCriaUsuario()) {
             processaCriacaoDeUsuario();
             ReturnMessagePane.informationPainel("Usuário criado com sucesso.");
@@ -679,7 +681,11 @@ public class JanelaCadastro extends javax.swing.JPanel {
     }//GEN-LAST:event_bt_CriaGrupoActionPerformed
 
     private void bt_CriaUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_CriaUserActionPerformed
-        criaUsuario();
+        try {
+            criaUsuario();
+        } catch (Exception ex) {
+            Logger.getLogger(JanelaCadastro.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_bt_CriaUserActionPerformed
 
     private void bt_EditaGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_EditaGrupoActionPerformed

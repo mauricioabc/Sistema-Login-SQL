@@ -1,9 +1,11 @@
 package com.auth.Database;
 
+import com.auth.Entities.Config;
 import com.auth.Entities.User;
 import com.auth.Entities.UserType;
 import com.auth.Security.Security;
 import com.auth.View.ReturnMessagePane;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +63,7 @@ public class DatabaseManager {
     }
 
     
-    public void createUser(String nome, String email, String password, String userTypeName) {
+    public void createUser(String nome, String email, String password, String userTypeName) throws InvalidKeySpecException, Exception {
         emf = Persistence.createEntityManagerFactory("myPU");
         EntityManager em = emf.createEntityManager();
 
@@ -81,7 +83,7 @@ public class DatabaseManager {
             UUID userTypeId = (UUID) typeQuery.getSingleResult();
 
             // Calcular o hash da senha
-            String passwordHash = security.calcularHash(password);
+            String passwordHash = security.encryptPassword(password);
 
             // Criar o objeto User e persistir no banco de dados
             User user = new User(nome, email, passwordHash, userTypeId, new Date());
@@ -93,7 +95,7 @@ public class DatabaseManager {
         }
     }
     
-    public int login(String email, String senha) {
+    public int login(String email, String passwordHash) throws InvalidKeySpecException, Exception {
         //Inicializa
         emf = Persistence.createEntityManagerFactory("myPU");
         // Obter a instância do EntityManager a partir do EntityManagerFactory
@@ -109,7 +111,7 @@ public class DatabaseManager {
         // Verifica se o usuário foi encontrado
         if (user != null) {
             // Se o usuário foi encontrado, verificar a senha
-            if (user.getPasswordHash().equals(security.calcularHash(senha))) {
+            if (security.decryptPassword(user.getPasswordHash()).equals(security.decryptPassword(passwordHash))) {
                 // Se a senha estiver correta, retorna SUCCESS
                 return 1;
             } else {
@@ -208,6 +210,73 @@ public class DatabaseManager {
                 emf.close();
             }
         }
+    }
+    
+    public void createConfig(Config config) {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            // Verificar se já existe um registro na tabela
+            TypedQuery<Config> query = em.createQuery("SELECT c FROM Config c", Config.class);
+            List<Config> results = query.getResultList();
+
+            if (!results.isEmpty()) {
+                // Recuperar o ID do registro existente
+                UUID configId = results.get(0).getId();
+                config.setId(configId);
+
+                // Atualizar o registro existente
+                config = em.merge(config);
+            } else {
+                // Inserir um novo registro
+                em.persist(config);
+            }
+
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public String getPrivateKey() {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            TypedQuery<Config> query = em.createQuery("SELECT c FROM Config c", Config.class);
+            List<Config> results = query.getResultList();
+
+            if (!results.isEmpty()) {
+                Config config = results.get(0);
+                return config.getPrivateKey();
+            }
+        } finally {
+            em.close();
+        }
+
+        return null; // ou lançar uma exceção informando que a chave privada não foi encontrada
+    }
+
+    public String getPublicKey() {
+        emf = Persistence.createEntityManagerFactory("myPU");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            TypedQuery<Config> query = em.createQuery("SELECT c FROM Config c", Config.class);
+            List<Config> results = query.getResultList();
+
+            if (!results.isEmpty()) {
+                Config config = results.get(0);
+                return config.getPublicKey();
+            }
+        } finally {
+            em.close();
+        }
+
+        return null; // ou lançar uma exceção informando que a chave pública não foi encontrada
     }
 
 }

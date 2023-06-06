@@ -1,6 +1,8 @@
 import com.auth.Database.DatabaseManager;
 import com.auth.Entities.User;
 import com.auth.Entities.UserType;
+import com.auth.Security.Security;
+import java.security.spec.InvalidKeySpecException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -22,7 +24,13 @@ public class testeBanco {
     
     public testeBanco() {
     }
-
+    
+    @Test
+    public void testeCriarConfig(){
+        Security sec = new Security();
+        sec.generateKeyPair();
+    }
+    
     @Test
     public void testeCriaUserAndUserType() {
         // Cria uma instância do EntityManagerFactory
@@ -64,15 +72,15 @@ public class testeBanco {
     }
     
     @Test
-    public void criaUser(){
+    public void criaUser() throws Exception{
         DatabaseManager banco = new DatabaseManager();
-        banco.createUser("João", "pedro@gmail.com", "teste123", "Aluno");
+        banco.createUser("Maurício", "mauricio@gmail.com", "teste123", "Aluno");
     }
     
     @Test
-    public void login(){
+    public void login() throws Exception{
         DatabaseManager banco = new DatabaseManager();
-        int st = banco.login("joao@gmail.com", "teste123");
+        int st = banco.login("mauricio@gmail.com", "teste123");
 
         switch (st) {
             case 1:
@@ -90,6 +98,22 @@ public class testeBanco {
             default:
                 System.out.println("Erro desconhecido");
         }
+    }
+    
+    @Test
+    public void testeCript() throws InvalidKeySpecException, Exception{
+        Security sec = new Security();
+        DatabaseManager banco = new DatabaseManager();
+        String senha = "teste123";
+        
+        String passwordHash = sec.encryptPassword(senha);
+        
+        String passwordHash2 = sec.decryptPassword(passwordHash);
+        
+        System.out.println(passwordHash);
+        System.out.println(passwordHash2);
+        
+        System.out.println(passwordHash.equals(passwordHash2));
     }
     
 }
