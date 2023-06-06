@@ -10,6 +10,18 @@ import javax.crypto.Cipher;
  */
 public class CryptographyManager {
     
+    private static CryptographyManager Crypt;
+
+    private CryptographyManager() {
+        
+    }
+    
+    public static CryptographyManager getInstance() {
+        if(CryptographyManager.Crypt == null)
+            CryptographyManager.Crypt = new CryptographyManager();
+        return CryptographyManager.Crypt;
+    }
+    
     // Criptografar o texto usando a chave pública
     public String encrypt(String texto, PublicKey chavePublica) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA");

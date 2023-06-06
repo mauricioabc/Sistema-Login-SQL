@@ -1,7 +1,5 @@
 package com.auth.Entities;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;

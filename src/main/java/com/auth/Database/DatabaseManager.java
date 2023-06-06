@@ -5,6 +5,7 @@ import com.auth.Entities.User;
 import com.auth.Entities.UserType;
 import com.auth.Security.Security;
 import com.auth.View.ReturnMessagePane;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.ArrayList;
@@ -26,11 +27,18 @@ public class DatabaseManager {
     
     private EntityManagerFactory emf;
     private Security security;
+    private static DatabaseManager banco;
     
-    public DatabaseManager() {
+    private DatabaseManager() {
         emf = Persistence.createEntityManagerFactory("myPU");
-        security = new Security();
+        security = Security.getInstance();
     }
+    
+    public static DatabaseManager getInstance() {
+        if(DatabaseManager.banco == null)
+            DatabaseManager.banco = new DatabaseManager();
+        return DatabaseManager.banco;
+      }
     
     public void createUserType(String name, String description){
         emf = Persistence.createEntityManagerFactory("myPU");
@@ -81,12 +89,13 @@ public class DatabaseManager {
             Query typeQuery = em.createQuery("SELECT t.id FROM UserType t WHERE t.nome = :userTypeName");
             typeQuery.setParameter("userTypeName", userTypeName);
             UUID userTypeId = (UUID) typeQuery.getSingleResult();
-
+            UserType userType = em.find(UserType.class, userTypeId);
+            
             // Calcular o hash da senha
             String passwordHash = security.encryptPassword(password);
 
             // Criar o objeto User e persistir no banco de dados
-            User user = new User(nome, email, passwordHash, userTypeId, new Date());
+            User user = new User(nome, email, passwordHash, userType, new Date());
             em.getTransaction().begin();
             em.persist(user);
             em.getTransaction().commit();

@@ -15,7 +15,7 @@ public class Janela extends javax.swing.JFrame {
     static JanelaLogin p1;
     static JanelaCadastro p2;
     
-    public Janela() {
+    public Janela() throws Exception {
         initComponents();
         
         this.setLayout(new BorderLayout());
@@ -53,7 +53,7 @@ public class Janela extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

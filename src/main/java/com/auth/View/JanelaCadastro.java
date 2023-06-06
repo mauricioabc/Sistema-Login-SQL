@@ -11,14 +11,15 @@ import java.util.logging.Logger;
  *
  * @author mauricio.rodrigues
  */
-public class JanelaCadastro extends javax.swing.JPanel {
+public final class JanelaCadastro extends javax.swing.JPanel {
 
     private DatabaseManager banco;
     private List<UserType> listaGrupos;
     
-    public JanelaCadastro() {
+    public JanelaCadastro(String actualUserName) {
         initComponents();
-        banco = new DatabaseManager();
+        lb_ActualUser.setText(actualUserName);
+        banco = DatabaseManager.getInstance();
         getGrupos();
     }
 
@@ -69,6 +70,14 @@ public class JanelaCadastro extends javax.swing.JPanel {
         }
         if (tf_CriaDescricao.getText().isEmpty()) {
             ReturnMessagePane.errorPainel("Insira a Descrição."); 
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean verificaCamposEditaGrupo(){
+        if (cb_EditaGrupo.getSelectedItem().toString().equals("Selecione")) {
+            ReturnMessagePane.errorPainel("Selecione um grupo."); 
             return false;
         }
         return true;
@@ -133,6 +142,20 @@ public class JanelaCadastro extends javax.swing.JPanel {
         }
     }
     
+    public void editaGrupo(){
+        if (verificaCamposEditaGrupo()) {
+            processaAlteracaoDeGrupo();
+            ReturnMessagePane.informationPainel("Grupo editado com sucesso.");
+        }
+    }
+    
+    public void deletaGrupo(){
+        if (verificaCamposEditaGrupo()) {
+            processaDeleteDeGrupo();
+            ReturnMessagePane.informationPainel("Grupo excluído com sucesso.");
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -140,6 +163,7 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        lb_ActualUser = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -184,8 +208,8 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jComboBox3 = new javax.swing.JComboBox<>();
         jLabel22 = new javax.swing.JLabel();
         jComboBox4 = new javax.swing.JComboBox<>();
-        bt_CriaGrupo5 = new javax.swing.JButton();
-        bt_CriaGrupo4 = new javax.swing.JButton();
+        bt_AtualizaUser = new javax.swing.JButton();
+        bt_ExcluirUser = new javax.swing.JButton();
         jPasswordField1 = new javax.swing.JPasswordField();
         bt_Logout = new javax.swing.JButton();
 
@@ -197,20 +221,28 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Gestão de Usuários");
 
+        lb_ActualUser.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lb_ActualUser.setForeground(new java.awt.Color(255, 255, 255));
+        lb_ActualUser.setText("<actualUser>");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(220, 220, 220)
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lb_ActualUser)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(lb_ActualUser))
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
@@ -347,7 +379,7 @@ public class JanelaCadastro extends javax.swing.JPanel {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(124, 124, 124)
                         .addComponent(jLabel8)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 112, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel12)
@@ -445,20 +477,18 @@ public class JanelaCadastro extends javax.swing.JPanel {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addGap(24, 24, 24)
-                        .addComponent(cb_EditaGrupo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(bt_ExcluiGrupo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bt_EditaGrupo))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel16)
-                            .addComponent(jLabel15))
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel14))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cb_EditaGrupo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(tf_EditaDescriçãoGrupo)
                             .addComponent(tf_EditaNomeGrupo))))
                 .addContainerGap())
@@ -524,21 +554,21 @@ public class JanelaCadastro extends javax.swing.JPanel {
         jComboBox4.setForeground(new java.awt.Color(0, 0, 0));
         jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione" }));
 
-        bt_CriaGrupo5.setBackground(new java.awt.Color(204, 204, 204));
-        bt_CriaGrupo5.setForeground(new java.awt.Color(0, 0, 0));
-        bt_CriaGrupo5.setText("Alterar");
-        bt_CriaGrupo5.addActionListener(new java.awt.event.ActionListener() {
+        bt_AtualizaUser.setBackground(new java.awt.Color(204, 204, 204));
+        bt_AtualizaUser.setForeground(new java.awt.Color(0, 0, 0));
+        bt_AtualizaUser.setText("Alterar");
+        bt_AtualizaUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_CriaGrupo5ActionPerformed(evt);
+                bt_AtualizaUserActionPerformed(evt);
             }
         });
 
-        bt_CriaGrupo4.setBackground(new java.awt.Color(204, 204, 204));
-        bt_CriaGrupo4.setForeground(new java.awt.Color(0, 0, 0));
-        bt_CriaGrupo4.setText("Excluir");
-        bt_CriaGrupo4.addActionListener(new java.awt.event.ActionListener() {
+        bt_ExcluirUser.setBackground(new java.awt.Color(204, 204, 204));
+        bt_ExcluirUser.setForeground(new java.awt.Color(0, 0, 0));
+        bt_ExcluirUser.setText("Excluir");
+        bt_ExcluirUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_CriaGrupo4ActionPerformed(evt);
+                bt_ExcluirUserActionPerformed(evt);
             }
         });
 
@@ -552,27 +582,25 @@ public class JanelaCadastro extends javax.swing.JPanel {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(124, 124, 124)
                 .addComponent(jLabel17)
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(bt_CriaGrupo4)
+                        .addComponent(bt_ExcluirUser)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bt_CriaGrupo5))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel22)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(bt_AtualizaUser))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19)
                             .addComponent(jLabel18)
                             .addComponent(jLabel20)
-                            .addComponent(jLabel21))
-                        .addGap(13, 13, 13)
+                            .addComponent(jLabel21)
+                            .addComponent(jLabel22))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(tf_Email9, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(tf_Email8)
@@ -608,8 +636,8 @@ public class JanelaCadastro extends javax.swing.JPanel {
                     .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bt_CriaGrupo4)
-                    .addComponent(bt_CriaGrupo5))
+                    .addComponent(bt_ExcluirUser)
+                    .addComponent(bt_AtualizaUser))
                 .addContainerGap())
         );
 
@@ -689,20 +717,20 @@ public class JanelaCadastro extends javax.swing.JPanel {
     }//GEN-LAST:event_bt_CriaUserActionPerformed
 
     private void bt_EditaGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_EditaGrupoActionPerformed
-        processaAlteracaoDeGrupo();
+        editaGrupo();
     }//GEN-LAST:event_bt_EditaGrupoActionPerformed
 
     private void bt_ExcluiGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_ExcluiGrupoActionPerformed
-        processaDeleteDeGrupo();
+        deletaGrupo();
     }//GEN-LAST:event_bt_ExcluiGrupoActionPerformed
 
-    private void bt_CriaGrupo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_CriaGrupo4ActionPerformed
+    private void bt_ExcluirUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_ExcluirUserActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bt_CriaGrupo4ActionPerformed
+    }//GEN-LAST:event_bt_ExcluirUserActionPerformed
 
-    private void bt_CriaGrupo5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_CriaGrupo5ActionPerformed
+    private void bt_AtualizaUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_AtualizaUserActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bt_CriaGrupo5ActionPerformed
+    }//GEN-LAST:event_bt_AtualizaUserActionPerformed
 
     private void bt_LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_LogoutActionPerformed
         System.exit(0);
@@ -714,12 +742,12 @@ public class JanelaCadastro extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bt_AtualizaUser;
     private javax.swing.JButton bt_CriaGrupo;
-    private javax.swing.JButton bt_CriaGrupo4;
-    private javax.swing.JButton bt_CriaGrupo5;
     private javax.swing.JButton bt_CriaUser;
     private javax.swing.JButton bt_EditaGrupo;
     private javax.swing.JButton bt_ExcluiGrupo;
+    private javax.swing.JButton bt_ExcluirUser;
     private javax.swing.JButton bt_Logout;
     private javax.swing.JComboBox<String> cb_CriaGrupo;
     private javax.swing.JComboBox<String> cb_EditaGrupo;
@@ -756,6 +784,7 @@ public class JanelaCadastro extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JLabel lb_ActualUser;
     private javax.swing.JPasswordField pf_CriaSenha;
     private javax.swing.JTextField tf_CriaDescricao;
     private javax.swing.JTextField tf_CriaEmail;

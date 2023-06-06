@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,8 +37,9 @@ public class User {
     @Column(name = "PasswordHash", columnDefinition = "varchar(max)")
     private String passwordHash;
     
-    @Column(name = "UserTypeId", columnDefinition = "uniqueidentifier")
-    private UUID userTypeId;
+    @ManyToOne
+    @JoinColumn(name = "UserTypeId")
+    private UserType userType;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "InsertDate")
@@ -48,11 +51,11 @@ public class User {
         // construtor vazio necessário para o Hibernate
     }
 
-    public User(String nome, String email, String passwordHash, UUID userTypeId, Date insertDate) {
+    public User(String nome, String email, String passwordHash, UserType userType, Date insertDate) {
         this.nome = nome;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.userTypeId = userTypeId;
+        this.userType = userType;
         this.insertDate = insertDate;
     }
 
@@ -89,11 +92,11 @@ public class User {
     }
 
     public UUID getUserTypeId() {
-        return userTypeId;
+        return userType.getId();
     }
 
-    public void setUserTypeId(UUID userTypeId) {
-        this.userTypeId = userTypeId;
+    public void setUserTypeId(UserType userType) {
+        this.userType.setId(userType.getId());
     }
 
     public Date getInsertDate() {

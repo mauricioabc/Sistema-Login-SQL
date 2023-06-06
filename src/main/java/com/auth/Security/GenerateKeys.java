@@ -12,6 +12,18 @@ import java.security.Security;
  */
 public class GenerateKeys {
     
+    private static GenerateKeys generateKeys;
+
+    private GenerateKeys() {
+        
+    }
+    
+    public static GenerateKeys getInstance() {
+        if(GenerateKeys.generateKeys == null)
+            GenerateKeys.generateKeys = new GenerateKeys();
+        return GenerateKeys.generateKeys;
+    }
+    
     public KeyPair generateKeys(){
         try {
             // Adiciona o provedor Bouncy Castle

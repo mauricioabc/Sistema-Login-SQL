@@ -1,3 +1,5 @@
+package TestsAuthorization;
+
 import com.auth.Database.DatabaseManager;
 import com.auth.Entities.User;
 import com.auth.Entities.UserType;
@@ -8,13 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.Date;
-import java.util.UUID;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -27,7 +23,7 @@ public class testeBanco {
     
     @Test
     public void testeCriarConfig(){
-        Security sec = new Security();
+        Security sec = Security.getInstance();
         sec.generateKeyPair();
     }
     
@@ -50,7 +46,7 @@ public class testeBanco {
         em.persist(userType);
 
         // Cria um objeto User e define seus atributos, incluindo o userTypeId como o id do objeto UserType criado anteriormente
-        User user = new User("João da Silva", "joao.silva@example.com", "123456", userType.getId(), new Date());
+        User user = new User("João da Silva", "joao.silva@example.com", "123456", userType, new Date());
 
         // Salva o objeto User no banco de dados
         em.persist(user);
@@ -67,19 +63,19 @@ public class testeBanco {
     
     @Test
     public void criaUserType(){
-        DatabaseManager banco = new DatabaseManager();
-        banco.createUserType("Aluno", "Usuário com acesso de aluno");
+        DatabaseManager banco = DatabaseManager.getInstance();
+        banco.createUserType("Aluno", "Usuário com acesso de Aluno");
     }
     
     @Test
     public void criaUser() throws Exception{
-        DatabaseManager banco = new DatabaseManager();
+        DatabaseManager banco = DatabaseManager.getInstance();
         banco.createUser("Maurício", "mauricio@gmail.com", "teste123", "Aluno");
     }
     
     @Test
     public void login() throws Exception{
-        DatabaseManager banco = new DatabaseManager();
+        DatabaseManager banco = DatabaseManager.getInstance();
         int st = banco.login("mauricio@gmail.com", "teste123");
 
         switch (st) {
@@ -102,8 +98,8 @@ public class testeBanco {
     
     @Test
     public void testeCript() throws InvalidKeySpecException, Exception{
-        Security sec = new Security();
-        DatabaseManager banco = new DatabaseManager();
+        Security sec = Security.getInstance();
+        DatabaseManager banco = DatabaseManager.getInstance();
         String senha = "teste123";
         
         String passwordHash = sec.encryptPassword(senha);

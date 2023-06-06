@@ -16,8 +16,20 @@ import java.util.Base64;
 
 public class Security {
 
+    private static Security security;
+    
+    private Security() {
+        
+    }
+
+    public static Security getInstance() {
+        if(Security.security == null)
+            Security.security = new Security();
+        return Security.security;
+    }
+    
     public boolean generateKeyPair(){
-        GenerateKeys geraChaves = new GenerateKeys();
+        GenerateKeys geraChaves = GenerateKeys.getInstance();
         KeyPair keyPair = geraChaves.generateKeys();
         
         String publicKey, privateKey;
@@ -26,13 +38,13 @@ public class Security {
         
         Config config = new Config(publicKey, privateKey);
         
-        DatabaseManager banco = new DatabaseManager();
+        DatabaseManager banco = DatabaseManager.getInstance();
         banco.createConfig(config);
         return true;
     }
     
     public PublicKey getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException{
-        DatabaseManager banco = new DatabaseManager();
+        DatabaseManager banco = DatabaseManager.getInstance();
         byte[] publicKeyBytes = Base64.getDecoder().decode(banco.getPublicKey());
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -40,13 +52,13 @@ public class Security {
     }
     
     public String encryptPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException, Exception{
-        CryptographyManager cripto = new CryptographyManager();
+        CryptographyManager cripto = CryptographyManager.getInstance();
         String textoCriptografadoComChavePublica = cripto.encrypt(password, getPublicKey());
         return textoCriptografadoComChavePublica;
     }
     
     public PrivateKey getPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        DatabaseManager banco = new DatabaseManager();
+        DatabaseManager banco = DatabaseManager.getInstance();
         byte[] privateKeyBytes = Base64.getDecoder().decode(banco.getPrivateKey());
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
@@ -54,7 +66,7 @@ public class Security {
     }
     
     public String decryptPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException, Exception{
-        CryptographyManager cripto = new CryptographyManager();
+        CryptographyManager cripto = CryptographyManager.getInstance();
         String textoDecriptografadoComChavePrivada = cripto.decrypt(password, getPrivateKey());
         return textoDecriptografadoComChavePrivada;
     }

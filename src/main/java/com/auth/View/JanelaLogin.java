@@ -12,19 +12,19 @@ import javax.swing.SwingUtilities;
  *
  * @author mauricio.rodrigues
  */
-public class JanelaLogin extends javax.swing.JPanel {
+public final class JanelaLogin extends javax.swing.JPanel {
 
     private DatabaseManager banco;
     private Security sec;
     
-    public JanelaLogin() {
+    public JanelaLogin() throws Exception {
         initComponents();
-        banco = new DatabaseManager();
-        sec = new Security();
+        banco = DatabaseManager.getInstance();
+        sec = Security.getInstance();
     }
-
-    public void gotoJanelaCadastro(){
-        Janela.p2 = new JanelaCadastro();
+    
+    public void gotoJanelaCadastro(String actualUserName){
+        Janela.p2 = new JanelaCadastro(actualUserName);
         JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p1);
         janela.getContentPane().remove(Janela.p1);
         janela.add(Janela.p2, BorderLayout.CENTER);
@@ -61,7 +61,7 @@ public class JanelaLogin extends javax.swing.JPanel {
             switch (status) {
             case 1:
                 //ReturnMessagePane.informationPainel("Login bem sucedido");
-                gotoJanelaCadastro();
+                gotoJanelaCadastro(tf_Email.getText());
                 break;
             case 4:
                 ReturnMessagePane.errorPainel("Email nao encontrado");
