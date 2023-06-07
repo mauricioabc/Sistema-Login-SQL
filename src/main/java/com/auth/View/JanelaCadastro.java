@@ -2,6 +2,7 @@ package com.auth.View;
 
 import com.auth.Database.DatabaseManager;
 import com.auth.Entities.UserType;
+import com.logger.Log.Log;
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.UUID;
@@ -125,45 +126,58 @@ public final class JanelaCadastro extends javax.swing.JPanel {
     }
     
     public void processaCriacaoDeUsuario() throws Exception{
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Iniciando processo de criação de usuário.");
         String nome, email, senha, grupo;
         nome = tf_CriaUser.getText();
         email = tf_CriaEmail.getText();
         char[] password = pf_CriaSenha.getPassword();
         senha = new String(password);
         grupo = cb_CriaGrupo.getSelectedItem().toString();
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Usuário a ser criado: " + nome + " - " + email + " - " + grupo);
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Usuário responsável pela criação: " + lb_ActualUser.getText());
         banco.createUser(nome, email, senha, grupo);
     }
     
     public void processaCriacaoDeGrupo(){
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Iniciando processo de criação de grupo.");
         String nome, descricao;
         nome = tf_CriaGrupo.getText();
         descricao = tf_CriaDescricao.getText();
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Grupo a ser criado: " + nome + " - " + descricao);
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Usuário responsável pela criação: " + lb_ActualUser.getText());
         banco.createUserType(nome, descricao);
     }
     
     public void processaAlteracaoDeGrupo(){
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Iniciando processo de alteração de grupo.");
         UserType grupoAlterado = null;
-        String grupoALteradoNome = cb_EditaGrupo.getSelectedItem().toString();
+        String grupoAlteradoNome = cb_EditaGrupo.getSelectedItem().toString();
         
         for (UserType grupo : listaGrupos) {
-            if (grupoALteradoNome.equals(grupo.getNome())) {
+            if (grupoAlteradoNome.equals(grupo.getNome())) {
+                Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Grupo a ser alterado: " + grupo.toString());
                 grupoAlterado = grupo;
                 grupoAlterado.setNome(tf_EditaNomeGrupo.getText());
                 grupoAlterado.setDescricao(tf_EditaDescriçãoGrupo.getText());
+                Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Alteração realizada: " + grupoAlterado.toString());
             }
         }
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Usuário responsável pela alteração: " + lb_ActualUser.getText());
         banco.alterarGrupoUsuario(grupoAlterado);
     }
     
     public void processaDeleteDeGrupo(){
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Iniciando processo de exclusão de grupo.");
         UserType grupoDelete = null;
-        String grupoALteradoNome = cb_EditaGrupo.getSelectedItem().toString();
+        String grupoAlteradoNome = cb_EditaGrupo.getSelectedItem().toString();
         
         for (UserType grupo : listaGrupos) {
-            if (grupoALteradoNome.equals(grupo.getNome())) {
+            if (grupoAlteradoNome.equals(grupo.getNome())) {
+                Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Grupo a ser excluído: " + grupo.toString());
                 grupoDelete = grupo;
             }
         }
+        Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Usuário responsável pela exclusão: " + lb_ActualUser.getText());
         banco.deleteGrupoUsuario(grupoDelete);
     }
     
@@ -815,7 +829,9 @@ public final class JanelaCadastro extends javax.swing.JPanel {
 
     private void lb_LogoutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_LogoutMousePressed
         try {
+            Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Realizando logout do usuário.");
             logout();
+            Log.LogAuthenticationComponent("JanelaCadastro", "INFO", "Logout realizado com sucesso.");
         } catch (Exception ex) {
             Logger.getLogger(JanelaCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }

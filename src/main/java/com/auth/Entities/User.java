@@ -114,5 +114,10 @@ public class User {
     public void setInsertDate(Date insertDate) {
         this.insertDate = insertDate;
     }
+
+    @Override
+    public String toString() {
+        return "User{" + "nome=" + nome + ", email=" + email + ", userType=" + userType.getNome() + '}';
+    }
     
 }

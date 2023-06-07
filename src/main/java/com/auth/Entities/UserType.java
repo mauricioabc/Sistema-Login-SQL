@@ -78,5 +78,10 @@ public class UserType {
     public void setInsertDate(Date insertDate) {
         this.insertDate = insertDate;
     }
+
+    @Override
+    public String toString() {
+        return "UserType{" + "nome=" + nome + ", descricao=" + descricao + '}';
+    }
     
 }

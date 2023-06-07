@@ -1,5 +1,6 @@
 package com.auth.View;
 
+import com.logger.Log.Log;
 import java.awt.BorderLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +20,8 @@ public final class JanelaTeste extends javax.swing.JPanel {
 
     public void logout() throws Exception{
         Janela.p1 = new JanelaLogin();
-        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p2);
-        janela.getContentPane().remove(Janela.p2);
+        JFrame janela = (JFrame) SwingUtilities.getWindowAncestor(Janela.p3);
+        janela.getContentPane().remove(Janela.p3);
         janela.add(Janela.p1, BorderLayout.CENTER);
         janela.pack();
         janela.setLocationRelativeTo(null);
@@ -146,9 +147,11 @@ public final class JanelaTeste extends javax.swing.JPanel {
 
     private void lb_LogoutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_LogoutMousePressed
         try {
+            Log.LogAuthenticationComponent("JanelaTeste", "INFO", "Realizando logout do usuário.");
             logout();
+            Log.LogAuthenticationComponent("JanelaTeste", "INFO", "Logout realizado com sucesso.");
         } catch (Exception ex) {
-            Logger.getLogger(JanelaTeste.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JanelaCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lb_LogoutMousePressed
 

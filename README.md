@@ -11,6 +11,7 @@ O sistema gooLogin tem como finalidade auxiliar no processo de login, fornecendo
 
 ## Como utilizar
 - Pode ser utilizado em conjunto com outro sistema, visto que o componente de login visa aunteticar o usuário e direcionar para outra tela, de acordo com suas permissões.
+- A criação de um primeiro usuário para acesso pode ser feita manualmente no banco de dados, ou rodando o código contido na classe de teste `createDadosBasicos`
 
 ## Funcionalidades
 - Cadastros:

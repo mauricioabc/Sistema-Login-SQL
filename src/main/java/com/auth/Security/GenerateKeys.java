@@ -1,5 +1,6 @@
 package com.auth.Security;
 
+import com.logger.Log.Log;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -41,8 +42,10 @@ public class GenerateKeys {
     
     // Gera um par de chaves pública e privada usando RSA
     private KeyPair generateKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
+        Log.LogAuthenticationComponent("GenerateKeys", "INFO", "Gerando um par de chaves pública e privada usando RSA.");
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
         keyPairGenerator.initialize(2048); // Tamanho da chave (em bits)
+        Log.LogAuthenticationComponent("GenerateKeys", "INFO", "Retornando par de chaves gerado.");
         return keyPairGenerator.generateKeyPair();
     }
     
